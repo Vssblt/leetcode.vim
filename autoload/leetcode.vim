@@ -72,10 +72,12 @@ function! s:SetupProblemListBuffer() abort
     setlocal bufhidden=hide
     setlocal nowrap
     nnoremap <silent> <buffer> <return> :call <SID>HandleProblemListCR()<cr>
-    nnoremap <silent> <buffer> s :call <SID>HandleProblemListS()<cr>
-    nnoremap <silent> <buffer> r :call <SID>HandleProblemListR()<cr>
-    nnoremap <silent> <buffer> S :call <SID>HandleProblemListSort()<cr>
+    command! -nargs=0 LeetCodeSubmissions  call <SID>HandleProblemListS()
+    command! -nargs=0 LeetCodeRefresh call <SID>HandleProblemListR()
+    command! -nargs=0 LeetCodeSort call <SID>HandleProblemListSort()  
 
+execute ":command! ConfigV :e " g:plugindir.'/config/vv-config.vim'
+execute ":command! HConfigV :e " g:plugindir.'/config/vv-hconfig.vim'
     call s:SetupBasicSyntax()
 
     syn match lcEasy /| Easy /hs=s+2
@@ -179,9 +181,9 @@ function! s:PrintProblemList() abort
                 \ '',
                 \ '### Keys',
                 \ '  <cr>  open the problem/go to the topic or company',
-                \ '  s     view the submissions',
-                \ '  r     refresh',
-                \ '  S     sort by column',
+                \ '  :LeetCodeSubmissions     view the submissions',
+                \ '  :LeetCodeRefresh     refresh',
+                \ '  :LeetCodeSort     sort by column',
                 \ '',
                 \ '### Indicators',
                 \ '  [P]   paid-only problems',
@@ -532,7 +534,6 @@ function! s:HandleProblemListCR() abort
                     \ problem_ext)
 
         if buflisted(problem_file_name)
-            execute bufnr(problem_file_name) . 'buffer'
             return
         endif
 
@@ -734,7 +735,7 @@ function! leetcode#ResetSolution(with_latest_submission) abort
     silent! normal! gggqG
 
     setlocal nomodifiable
-    setlocal buftype=nofile
+"    setlocal buftype=nofile
     setlocal nospell
 
     execute 'wincmd j'
